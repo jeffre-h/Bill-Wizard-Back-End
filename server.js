@@ -22,9 +22,11 @@ app.post("/api/create_user", (req,res)=> {
     console.log("result", req.body)
 
     const udata = {
-        "user_name": req.body.user_name, // primary key
-        "name": req.body.name,
-        "amount_owed": req.body.amount_owed
+        "firstName": req.body.firstName, // primary key
+        "lastName": req.body.lastName,
+        "email": req.body.email,
+        "ageTest": req.body.age,
+        "password": req.body.password,
     }
 
     userData.push(udata)
@@ -32,7 +34,7 @@ app.post("/api/create_user", (req,res)=> {
 
     res.status(200).send({
         "status_code": 200,
-        "message": "Product added successfully",
+        "message": "User added successfully",
         "user": udata
     })
 })

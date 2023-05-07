@@ -4,9 +4,11 @@ import 'package:http/http.dart' as http;
 void main() async {
   Map req = new Map();
   req = {
-    "user_name": "ron", // primary key
-    "name": "ronney",
-    "amount_owed": "100"
+    "firstName": "Tina", // primary key
+    "lastName": "Quang",
+    "email": "tinaquang@gmail.com",
+    "ageTest": "21",
+    "password": "12345678",
   };
   var baseUrl = Uri.parse("http://localhost:3000/api/create_user");
   var response = await http.post(baseUrl, body: req);
