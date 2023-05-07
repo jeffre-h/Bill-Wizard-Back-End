@@ -15,7 +15,8 @@ app.get("/api", async (req,res) => {
 })
 
 const userData = [] 
-// post api
+
+// Creates a user 
 app.post("/api/create_user", (req,res)=> {
     
     console.log("result", req.body)
