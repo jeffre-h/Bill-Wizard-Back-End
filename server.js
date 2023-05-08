@@ -9,8 +9,16 @@ const Receipt = require("./schemas/receipt")
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// FOR DB
+require('dotenv').config();
+const DB_KEY = process.env.DB_KEY;
 
-var { mongodbConnect } = require("./secret.js");
+// console.log(process.env);
+
+
+var { mongodbConnect } = module.exports = {
+    mongodbConnect: DB_KEY
+};
 // connect to mongoose
 mongoose.set('strictQuery', true);
 mongoose.connect(mongodbConnect, (error) => {
