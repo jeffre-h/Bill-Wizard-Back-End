@@ -1,7 +1,7 @@
 // import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-void main() async {
+void createUser() async {
   Map req = new Map();
   req = {
     "firstName": "Tina", // primary key
@@ -10,27 +10,28 @@ void main() async {
     "ageTest": "21",
     "password": "12345678",
   };
-  var baseUrl = Uri.parse("http://localhost:3000/api/create_user");
+  var baseUrl = Uri.parse("http://localhost:3000/api/createUser");
   var response = await http.post(baseUrl, body: req);
 
   print(response.body);
+}
 
-  // console.log("testing ...");
-  // static createUser(Map udata) async {
-  //     print(udata);
-  //     var url = Uri.parse("${baseUrl}create_user");
+void createReceipt() async {
+  Map req = new Map();
+  const receiptData = {
+    "location": "Boston Pizza", // primary key
+    "when": "February,20,2023",
+    "subTotal": "20.02",
+    "tax": "3.23",
+    "tip": "2.84",
+  };
+  var baseUrl = Uri.parse("http://localhost:3000/api/createReceipt");
+  var response = await http.post(baseUrl, body: req);
 
-  //     try {
-  //         final res = await http.post(url, body: udata);
+  print(response.body);
+}
 
-  //         if (res.statusCode == 200) {
-  //             var data = jsonDecode(res.body.toString());
-  //             print(data);
-  //         } else {
-  //             print("failed to get response");
-  //         }
-  //     } catch (e) {
-  //         debugPrint(e.toString());
-  //     }
-  // }
+void main() async {
+  createUser();
+  createReceipt();
 }
