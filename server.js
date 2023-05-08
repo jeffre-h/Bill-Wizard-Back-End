@@ -1,75 +1,58 @@
+// to run: npm start 
 const express = require("express")
-
+const mongoose = require("mongoose")
 const app = express()
+
+const User = require("./schemas/user")
+const Receipt = require("./schemas/receipt")
+
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 
-// temp
-app.get("/", async (req,res) => {
-    res.send("home sweet home ...")
-    console.log("root..")
-})
-app.get("/api", async (req,res) => {
-    res.send("this subd stores all the api's ...")
-    console.log("api...")
-})
 
-const userData = [] 
+// connect to mongoose
+mongoose.set('strictQuery', true);
+mongoose.connect("mongodb+srv://billwizard:FatFat123@cluster0.lshrhmo.mongodb.net/BillWizardDB", (error) => {
+    if (!error) {
+        console.log("connected to mongodb\n");
 
-// Create a user 
-app.post("/api/createUser", (req,res)=> {
-    
-    console.log("result", req.body)
+        // Create a user 
+        app.post("/api/createUser", async (req, res) => {
+            console.log("result", req.body)
+            let data = User(req.body);
 
-    const uData = {
-        "firstName": req.body.firstName,
-        "lastName": req.body.lastName,
-        "email": req.body.email,
-        "ageTest": req.body.age,
-        "password": req.body.password,
+            try {
+                let dataToStore = await data.save()
+                res.status(200).json(dataToStore)
+            } catch (error) {
+                res.status(400).json({
+                    'status': error.message
+                })
+            }
+        })
+
+        // Create a receipt
+        app.post("/api/createReceipt", async (req, res) => {
+            console.log("result", req.body)
+            let data = Receipt(req.body)
+
+            try {
+                let dataToStore = await data.save()
+                res.status(200).json(dataToStore)
+            } catch (error) {
+                res.status(400).json({
+                    'status': error.message
+                })
+            }
+        })
+
+        // Authentication
+    } else {
+        console.log(error.message);
     }
-
-    userData.push(uData)
-    console.log("Final", uData)
-
-    res.status(200).send({
-        "status_code": 200,
-        "message": "User added successfully",
-        "user": uData
-    })
-
-    // Add db code here.
 })
 
-// Create a receipt
-app.post("/api/createReceipt", (req,res)=> {
-    
-    console.log("result", req.body)
 
-    const receiptData = {
-        "location": req.body.location,
-        "when": req.body.when,
-        "subTotal": req.body.subTotal,
-        "tax": req.body.tax,
-        "tip": req.body.tip,
-    }
-
-    userData.push(receiptData)
-    console.log("Final", receiptData)
-
-    res.status(200).send({
-        "status_code": 200,
-        "message": "Receipt added successfully",
-        "bill": receiptData
-    })
-
-    // Add db code here.
-})
-
-// Authentication
-
-
-
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("\nconnected to server at 3000\n")
 })
