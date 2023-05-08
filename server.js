@@ -55,6 +55,19 @@ mongoose.connect(mongodbConnect, (error) => {
             }
         })
 
+        // Log in
+        app.post("/api/logIn", async(req,res) => {
+            
+            const user = await User.findOne({ email: req.body.email });
+        
+            if(user.password == req.body.password){
+                res.send("Correct password.")
+            }
+            else{
+                res.send("Incorrect password or email.");
+            }
+        })
+
     } else {
         console.log(error.message);
     }
