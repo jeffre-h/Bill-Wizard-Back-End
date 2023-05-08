@@ -10,9 +10,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
+var { mongodbConnect } = require("./secret.js");
 // connect to mongoose
 mongoose.set('strictQuery', true);
-mongoose.connect("mongodb+srv://billwizard:FatFat123@cluster0.lshrhmo.mongodb.net/BillWizardDB", (error) => {
+mongoose.connect(mongodbConnect, (error) => {
     if (!error) {
         console.log("connected to mongodb\n");
 
@@ -46,7 +47,6 @@ mongoose.connect("mongodb+srv://billwizard:FatFat123@cluster0.lshrhmo.mongodb.ne
             }
         })
 
-        // Authentication
     } else {
         console.log(error.message);
     }
