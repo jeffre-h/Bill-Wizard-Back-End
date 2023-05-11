@@ -24,6 +24,15 @@ let receiptSchema = new mongoose.Schema({
     'payerEmail': { 
         required: true,
         type: String
+    },
+    'split': {
+        required: true,
+        type: Boolean
+    },
+    'image': {
+        required: false, 
+        data: Buffer,
+        contentType: String
     }
 })
 

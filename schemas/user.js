@@ -20,7 +20,12 @@ let userSchema = new mongoose.Schema({
     'password': {
         required: true,
         type: String
-    }
+    },
+    'profilePic': {
+        required: false,
+        data: Buffer,           // stores the image 
+        contentType: String     // stores the type of file (jpg, png, etc.)
+    }  
 })
 
 module.exports = mongoose.model("users", userSchema)

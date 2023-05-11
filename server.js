@@ -3,6 +3,15 @@ const express = require("express")
 const mongoose = require("mongoose")
 const app = express()
 
+// imports for storing images 
+const multer = require("multer")
+const upload = multer()
+const fse = require('fs-extra')
+const sharp = require('sharp')
+
+const path = require('path')
+fse.ensureDirSync(path.join("public","uploaded-photos"))
+
 const User = require("./schemas/user")
 const Receipt = require("./schemas/receipt")
 
@@ -15,6 +24,29 @@ const DB_KEY = process.env.DB_KEY;
 
 // console.log(process.env);
 
+// 
+// function ourCleanup(req, res, next) {
+//     if (typeof req.body.location != "string") req.body.location = ""
+//     if (typeof req.body.when != "string") req.body.when = ""
+//     if (typeof req.body.subTotal != "string") req.body.subTotal = ""
+//     if (typeof req.body.tax != "string") req.body.tax = ""
+//     if (typeof req.body.tip != "string") req.body.tip = ""
+//     if (typeof req.body.payerEmail != "string") req.body.payerEmail = ""
+//     if (typeof req.body.split != "boolean") req.body.split = ""
+//     if (typeof req.body._id != "string") req.body._id = ""
+  
+//     req.cleanData = {
+//       location: sanitizeHTML(req.body.location.trim(), { allowedTags: [], allowedAttributes: {} }),
+//       when: sanitizeHTML(req.body.when.trim(), { allowedTags: [], allowedAttributes: {} }),
+//       subTotal: sanitizeHTML(req.body.subTotal.trim(), { allowedTags: [], allowedAttributes: {} }),
+//       tax: sanitizeHTML(req.body.tax.trim(), { allowedTags: [], allowedAttributes: {} }),
+//       tip: sanitizeHTML(req.body.tip.trim(), { allowedTags: [], allowedAttributes: {} }),
+//       payerEmail: sanitizeHTML(req.body.payerEmail.trim(), { allowedTags: [], allowedAttributes: {} }),
+//       split: sanitizeHTML(req.body.split.trim(), { allowedTags: [], allowedAttributes: {} }),
+//     }
+  
+//     next()
+//   }
 
 var { mongodbConnect } = module.exports = {
     mongodbConnect: DB_KEY
@@ -26,7 +58,7 @@ mongoose.connect(mongodbConnect, (error) => {
         console.log("connected to mongodb\n");
 
         // Create a user 
-        app.post("/api/createUser", async (req, res) => {
+        app.post("/api/createUser", async (req, res) => {       
             console.log("result", req.body)
             let data = User(req.body);
 
@@ -41,9 +73,15 @@ mongoose.connect(mongodbConnect, (error) => {
         })
 
         // Create a receipt
-        app.post("/api/createReceipt", async (req, res) => {
+        app.post("/api/createReceipt", upload.single("photo"), ourCleanup, async (req, res) => {
             console.log("result", req.body)
             let data = Receipt(req.body)
+
+            if (req.file) {
+                const photofilename = `${Date.now()}.jpg`
+                await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
+                data.photo = photofilename    
+            }
 
             try {
                 let dataToStore = await data.save()
