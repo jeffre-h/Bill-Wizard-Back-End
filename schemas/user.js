@@ -9,7 +9,7 @@ let userSchema = new mongoose.Schema({
         required: true,
         type: String
     },
-    'email': {
+    'email': { // primary key
         required: true,
         type: String
     },

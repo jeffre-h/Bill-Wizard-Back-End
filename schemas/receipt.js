@@ -6,7 +6,7 @@ let receiptSchema = new mongoose.Schema({
         type: String
     },
     'when': {
-        required: true,
+        required: false,
         type: String
     },
     'subTotal': {
@@ -14,10 +14,14 @@ let receiptSchema = new mongoose.Schema({
         type: String
     },
     'tax': {
-        required: true,
+        required: false,
         type: String
     },
     'tip': {
+        required: false,
+        type: String
+    },
+    'payerEmail': { 
         required: true,
         type: String
     }
