@@ -61,10 +61,23 @@ mongoose.connect(mongodbConnect, (error) => {
             const user = await User.findOne({ email: req.body.email });
         
             if(user.password == req.body.password){
-                res.send("Correct password.")
+                res.send("Correct password.");
             }
             else{
                 res.send("Incorrect password or email.");
+            }
+        })
+
+        // Grabs the user's first and last name given email.
+        app.post("/api/grabInfo", async(req,res) => {
+            
+            const user = await User.findOne({ email: req.body.email });
+            if(user.email == req.body.email){
+                res.json({first_name:user.firstName,last_name:user.lastName});
+            }
+            else{
+                res.send("User does not exist");
+
             }
         })
 
