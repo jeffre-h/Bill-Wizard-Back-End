@@ -25,14 +25,13 @@ let receiptSchema = new mongoose.Schema({
         required: true,
         type: String
     },
-    'split': {
-        required: true,
-        type: Boolean
-    },
+    // 'split': {
+    //     required: true,
+    //     type: Boolean
+    // },
     'image': {
         required: false, 
-        data: Buffer,
-        contentType: String
+        type: String
     }
 })
 

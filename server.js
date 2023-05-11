@@ -73,19 +73,23 @@ mongoose.connect(mongodbConnect, (error) => {
         })
 
         // Create a receipt
-        app.post("/api/createReceipt", upload.single("photo"), ourCleanup, async (req, res) => {
+        app.post("/api/createReceipt", upload.single("image"), async (req, res) => {
             console.log("result", req.body)
             let data = Receipt(req.body)
 
             if (req.file) {
                 const photofilename = `${Date.now()}.jpg`
                 await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
-                data.photo = photofilename    
+                data.image = photofilename    
+                console.log(data);
             }
 
             try {
+                console.log("hello jodie")
                 let dataToStore = await data.save()
+                console.log("Hello jeffrey")
                 res.status(200).json(dataToStore)
+                console.log("Hello ronney")
             } catch (error) {
                 res.status(400).json({
                     'status': error.message
