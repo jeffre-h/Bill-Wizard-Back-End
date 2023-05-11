@@ -38,8 +38,8 @@ Future<void> sendRequestWithFile() async {
 
   // Add the file to the request
   // UNCOMMENT THIS WHEN TESTING
-  // var file = await http.MultipartFile.fromPath('image', );
-  // request.files.add(file);
+  var file = await http.MultipartFile.fromPath('image', "/Users/jeffreywong/Desktop/Bill-Wizard-Backend/assets/images/gitpp.png");
+  request.files.add(file);
 
   // Add additional fields
   request.fields['location'] = "Boston Pizza";
@@ -62,7 +62,7 @@ Future<void> sendRequestWithFile() async {
 }
 
 void main() async {
-  createUser();
-  createReceipt();
+  // createUser();
+  // createReceipt();
   sendRequestWithFile();
 }
