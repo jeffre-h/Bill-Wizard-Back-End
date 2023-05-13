@@ -100,10 +100,24 @@ mongoose.connect(mongodbConnect, (error) => {
             if (user) {
                 // retrieve all receipts associated to the user
                 const receipts = await Receipt.find({ payerEmail: req.body.email })
-                console.log(receipts)
+                res.json(receipts)
             }
             else {
                 console.log("user does not exist")
+            }
+            
+        })
+
+        // grab user first and last name
+        app.post("/api/grabUserInfo", async (req, res) => {
+
+            const user = await User.findOne({ email: req.body.email });
+            if(user.email == req.body.email){
+                res.json({first_name:user.firstName,last_name:user.lastName});
+            }
+            else{
+                res.send("User does not exist");
+
             }
             
         })
