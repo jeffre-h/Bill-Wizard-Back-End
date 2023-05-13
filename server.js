@@ -23,31 +23,7 @@ require('dotenv').config();
 const DB_KEY = process.env.DB_KEY;
 
 // console.log(process.env);
-
-// 
-// function ourCleanup(req, res, next) {
-//     if (typeof req.body.location != "string") req.body.location = ""
-//     if (typeof req.body.when != "string") req.body.when = ""
-//     if (typeof req.body.subTotal != "string") req.body.subTotal = ""
-//     if (typeof req.body.tax != "string") req.body.tax = ""
-//     if (typeof req.body.tip != "string") req.body.tip = ""
-//     if (typeof req.body.payerEmail != "string") req.body.payerEmail = ""
-//     if (typeof req.body.split != "boolean") req.body.split = ""
-//     if (typeof req.body._id != "string") req.body._id = ""
-  
-//     req.cleanData = {
-//       location: sanitizeHTML(req.body.location.trim(), { allowedTags: [], allowedAttributes: {} }),
-//       when: sanitizeHTML(req.body.when.trim(), { allowedTags: [], allowedAttributes: {} }),
-//       subTotal: sanitizeHTML(req.body.subTotal.trim(), { allowedTags: [], allowedAttributes: {} }),
-//       tax: sanitizeHTML(req.body.tax.trim(), { allowedTags: [], allowedAttributes: {} }),
-//       tip: sanitizeHTML(req.body.tip.trim(), { allowedTags: [], allowedAttributes: {} }),
-//       payerEmail: sanitizeHTML(req.body.payerEmail.trim(), { allowedTags: [], allowedAttributes: {} }),
-//       split: sanitizeHTML(req.body.split.trim(), { allowedTags: [], allowedAttributes: {} }),
-//     }
-  
-//     next()
-//   }
-
+ 
 var { mongodbConnect } = module.exports = {
     mongodbConnect: DB_KEY
 };
@@ -58,9 +34,16 @@ mongoose.connect(mongodbConnect, (error) => {
         console.log("connected to mongodb\n");
 
         // Create a user 
-        app.post("/api/createUser", async (req, res) => {       
+        app.post("/api/createUser", upload.single("image"), async (req, res) => {       
             console.log("result", req.body)
             let data = User(req.body);
+
+            if (req.file) {
+                const photofilename = `${Date.now()}.jpg`
+                await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
+                data.image = photofilename    
+                console.log(data);
+            }
 
             try {
                 let dataToStore = await data.save()
@@ -85,17 +68,15 @@ mongoose.connect(mongodbConnect, (error) => {
             }
 
             try {
-                console.log("hello jodie")
                 let dataToStore = await data.save()
-                console.log("Hello jeffrey")
                 res.status(200).json(dataToStore)
-                console.log("Hello ronney")
             } catch (error) {
                 res.status(400).json({
                     'status': error.message
                 })
             }
         })
+
 
         // Log in
         app.post("/api/logIn", async(req,res) => {

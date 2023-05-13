@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 void createUser() async {
   Map req = new Map();
   req = {
-    "firstName": "HEHE", // primary key
-    "lastName": "XD",
-    "email": "haha@gmail.com",
+    "firstName": "con", // primary key
+    "lastName": "bed",
+    "email": "conbed@gmail.com",
     "ageTest": "21",
     "password": "12345678",
   };
@@ -34,7 +34,7 @@ void createReceipt() async {
 // Function for adding receipt.
 Future<void> sendRequestWithFile() async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('http://localhost:3000/api/createReceipt'));
+      'POST', Uri.parse('http://localhost:3000/api/createUser'));
 
   // Add the file to the request
   // UNCOMMENT THIS WHEN TESTING
@@ -42,12 +42,11 @@ Future<void> sendRequestWithFile() async {
   request.files.add(file);
 
   // Add additional fields
-  request.fields['location'] = "Boston Pizza";
-  request.fields['when'] = "March 20 1993";
-  request.fields['subTotal'] = "22.21";
-  request.fields['tax'] = "2.32";
-  request.fields['tip'] = "1.23";
-  request.fields['payerEmail'] = "kevindang@gmail.com";
+  request.fields['firstName'] = "Connor";
+  request.fields['lastName'] = "Bedard";
+  request.fields['email'] = "cbcbcb@gmail.com";
+  request.fields['ageTest'] = "17";
+  request.fields['password'] = "dwjadlj291f";
   // request.fields['image'] = imgPath;
 
   // Send the request
