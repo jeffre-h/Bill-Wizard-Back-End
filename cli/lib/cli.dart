@@ -60,8 +60,24 @@ Future<void> sendRequestWithFile() async {
   }
 }
 
+void loadContent() async {
+  Map req = new Map();
+  req = {
+    "firstName": "veronica", // primary key
+    "lastName": "smith",
+    "email": "veronica@gmail.com",
+    "ageTest": "21",
+    "password": "12345678",
+  };
+  var baseUrl = Uri.parse("http://localhost:3000/api/loadContent");
+  var response = await http.post(baseUrl, body: req);
+
+  print(response.body);
+}
+
 void main() async {
   // createUser();
   // createReceipt();
-  sendRequestWithFile();
+  // sendRequestWithFile();
+  loadContent();
 }

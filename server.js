@@ -10,7 +10,7 @@ const fse = require('fs-extra')
 const sharp = require('sharp')
 
 const path = require('path')
-fse.ensureDirSync(path.join("public","uploaded-photos"))
+fse.ensureDirSync(path.join("public", "uploaded-photos"))
 
 const User = require("./schemas/user")
 const Receipt = require("./schemas/receipt")
@@ -23,7 +23,7 @@ require('dotenv').config();
 const DB_KEY = process.env.DB_KEY;
 
 // console.log(process.env);
- 
+
 var { mongodbConnect } = module.exports = {
     mongodbConnect: DB_KEY
 };
@@ -34,14 +34,14 @@ mongoose.connect(mongodbConnect, (error) => {
         console.log("connected to mongodb\n");
 
         // Create a user 
-        app.post("/api/createUser", upload.single("image"), async (req, res) => {       
+        app.post("/api/createUser", upload.single("image"), async (req, res) => {
             console.log("result", req.body)
             let data = User(req.body);
 
             if (req.file) {
                 const photofilename = `${Date.now()}.jpg`
                 await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
-                data.image = photofilename    
+                data.image = photofilename
                 console.log(data);
             }
 
@@ -63,7 +63,7 @@ mongoose.connect(mongodbConnect, (error) => {
             if (req.file) {
                 const photofilename = `${Date.now()}.jpg`
                 await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
-                data.image = photofilename    
+                data.image = photofilename
                 console.log(data);
             }
 
@@ -79,29 +79,33 @@ mongoose.connect(mongodbConnect, (error) => {
 
 
         // Log in
-        app.post("/api/logIn", async(req,res) => {
-            
+        app.post("/api/logIn", async (req, res) => {
+
             const user = await User.findOne({ email: req.body.email });
-        
-            if(user.password == req.body.password){
+
+            if (user) {
                 res.send("Correct password.");
             }
-            else{
+            else {
                 res.send("Incorrect password or email.");
             }
         })
 
-        // Grabs the user's first and last name given email.
-        app.post("/api/grabInfo", async(req,res) => {
-            
-            const user = await User.findOne({ email: req.body.email });
-            if(user.email == req.body.email){
-                res.json({first_name:user.firstName,last_name:user.lastName});
-            }
-            else{
-                res.send("User does not exist");
+        // Load user content
+        app.post("/api/loadContent", async (req, res) => {
 
+            const user = await User.findOne({ email: req.body.email })
+
+            // if user email exists then it is valid, load content for that user
+            if (user) {
+                // retrieve all receipts associated to the user
+                const receipts = await Receipt.find({ payerEmail: req.body.email })
+                console.log(receipts)
             }
+            else {
+                console.log("user does not exist")
+            }
+            
         })
 
     } else {
