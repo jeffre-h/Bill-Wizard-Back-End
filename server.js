@@ -12,8 +12,10 @@ const sharp = require('sharp')
 const path = require('path')
 fse.ensureDirSync(path.join("public", "uploaded-photos"))
 
+// schemas
 const User = require("./schemas/user")
 const Receipt = require("./schemas/receipt")
+const Friendship = require("./schemas/friendship")
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -77,11 +79,25 @@ mongoose.connect(mongodbConnect, (error) => {
             }
         })
 
+        // Create a friendship
+        app.post("/api/createFriendship", async (req,res) => {
+            console.log("result", req.body)
+            let data = Friendship(req.body)
+
+            try {
+                let dataToStore = await data.save()
+                res.status(200).json(dataToStore)
+            } catch (error) {
+                res.status(400).json({
+                    'status': error.message
+                })
+            }
+        })
 
         // Log in
         app.post("/api/logIn", async (req, res) => {
 
-            const user = await User.findOne({ email: req.body.email });
+            let user = await User.findOne({ email: req.body.email });
 
             if (user) {
                 res.send("Correct password.");
@@ -91,21 +107,36 @@ mongoose.connect(mongodbConnect, (error) => {
             }
         })
 
-        // Load user content
-        app.post("/api/loadContent", async (req, res) => {
+        // Load user's receipts content
+        app.post("/api/loadReceiptContent", async (req, res) => {
 
-            const user = await User.findOne({ email: req.body.email })
+            let user = await User.findOne({ email: req.body.email })
 
             // if user email exists then it is valid, load content for that user
             if (user) {
                 // retrieve all receipts associated to the user
                 const receipts = await Receipt.find({ payerEmail: req.body.email })
+                console.log(receipts)
                 res.json(receipts)
             }
             else {
                 console.log("user does not exist")
             }
             
+        })
+
+        // Load user's friendships content
+        app.post("/api/loadFriendshipContent", async (req,res) => {
+            let user = await User.findOne({ email: req.body.email })
+
+            if (user) {
+                const friendships = await Friendship.find({$or: [{friend1: req.body.email},{friend2: req.body.email}] })
+                // const friendships = await Friendship.find({ friend2: req.body.email})
+                console.log(friendships)
+                res.json(friendships)
+            } else {
+                console.log("user does not exist")
+            }
         })
 
         // grab user first and last name
@@ -117,7 +148,6 @@ mongoose.connect(mongodbConnect, (error) => {
             }
             else{
                 res.send("User does not exist");
-
             }
             
         })
