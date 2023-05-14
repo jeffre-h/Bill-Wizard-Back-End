@@ -87,16 +87,24 @@ mongoose.connect(mongodbConnect, (error) => {
 
         // Create a friendship
         app.post("/api/createFriendship", async (req,res) => {
-            console.log("result", req.body)
-            let data = Friendship(req.body)
+            // note: user who initiates friend request will be set as friend1
 
-            try {
-                let dataToStore = await data.save()
-                res.status(200).json(dataToStore)
-            } catch (error) {
-                res.status(400).json({
-                    'status': error.message
-                })
+            let case1 = await Friendship.findOne({$and: [{friend1: req.body.friend1}, {friend2: req.body.friend2}] })
+            let case2 = await Friendship.findOne({$and: [{friend1: req.body.friend2}, {friend2: req.body.friend1}] })
+            if (case1 || case2) { // friendship already exists
+                res.send("friendship already exists")
+            } else {
+                console.log("result", req.body)
+                let data = Friendship(req.body)
+
+                try {
+                    let dataToStore = await data.save()
+                    res.status(200).json(dataToStore)
+                } catch (error) {
+                    res.status(400).json({
+                        'status': error.message
+                    })
+                }
             }
         })
 

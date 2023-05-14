@@ -34,8 +34,8 @@ void createReceipt() async {
 void createFriendship() async {
   Map req = new Map();
   req = {
-    "friend1": "kevindang@gmail.com", // primary key
-    "friend2": "veronica@gmail.com",
+    "friend1": "JohnnyRon@gmail.com", // primary key
+    "friend2": "ronneyJohn@gmail.com",
   };
   var baseUrl = Uri.parse("http://localhost:3000/api/createFriendship");
   var response = await http.post(baseUrl, body: req);
@@ -103,9 +103,9 @@ void loadFriendshipContent() async {
 }
 
 void main() async {
-  createUser();
+  // createUser();
   // createReceipt();
-  // createFriendship();
+  createFriendship();
   // sendRequestWithFile();
   // loadReceiptContent();
   //loadFriendshipContent();
