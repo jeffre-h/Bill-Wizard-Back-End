@@ -37,23 +37,29 @@ mongoose.connect(mongodbConnect, (error) => {
 
         // Create a user 
         app.post("/api/createUser", upload.single("image"), async (req, res) => {
-            console.log("result", req.body)
-            let data = User(req.body);
+            
+            let user = await User.findOne( {email: req.body.email} )
+            if (user) { // email is already in use
+                res.send("email is already in use")
+            } else {
+                console.log("result", req.body)
+                let data = User(req.body)
 
-            if (req.file) {
-                const photofilename = `${Date.now()}.jpg`
-                await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
-                data.image = photofilename
-                console.log(data);
-            }
-
-            try {
-                let dataToStore = await data.save()
-                res.status(200).json(dataToStore)
-            } catch (error) {
-                res.status(400).json({
-                    'status': error.message
-                })
+                if (req.file) {
+                    const photofilename = `${Date.now()}.jpg`
+                    await sharp(req.file.buffer).resize(844, 456).jpeg({ quality: 60 }).toFile(path.join("public", "uploaded-photos", photofilename))
+                    data.image = photofilename
+                    console.log(data)
+                }
+    
+                try {
+                    let dataToStore = await data.save()
+                    res.status(200).json(dataToStore)
+                } catch (error) {
+                    res.status(400).json({
+                        'status': error.message
+                    })
+                }
             }
         })
 
@@ -131,7 +137,6 @@ mongoose.connect(mongodbConnect, (error) => {
 
             if (user) {
                 const friendships = await Friendship.find({$or: [{friend1: req.body.email},{friend2: req.body.email}] })
-                // const friendships = await Friendship.find({ friend2: req.body.email})
                 console.log(friendships)
                 res.json(friendships)
             } else {

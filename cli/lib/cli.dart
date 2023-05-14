@@ -103,10 +103,10 @@ void loadFriendshipContent() async {
 }
 
 void main() async {
-  // createUser();
+  createUser();
   // createReceipt();
   // createFriendship();
   // sendRequestWithFile();
   // loadReceiptContent();
-  loadFriendshipContent();
+  //loadFriendshipContent();
 }
